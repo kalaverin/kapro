@@ -1,0 +1,108 @@
+"""Instance-level cached property descriptor.
+
+This module defines :class:`cached_property` — the caching equivalent of
+:class:`kapro.primitives.bound_property`.  It stores computed
+values in a per-instance dictionary named ``__instance_memoized__`` and
+supports parent-aware resolution (via inheritance from
+:class:`class_parent_cached_property`).
+"""
+
+# ruff: noqa: ANN401, N801
+
+from __future__ import annotations
+
+from collections.abc import Callable
+from contextlib import suppress
+from functools import cached_property as base_cached_property
+from types import NoneType
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    ClassVar,
+    TypeVar,
+    cast,
+    overload,
+    override,
+)
+
+from kain import Is, Who
+
+from kapro.cached.klass import class_parent_cached_property
+from kapro.primitives import ContextFaultError, parent_call
+
+__all__ = ("cached_property",)
+
+T_co = TypeVar("T_co", covariant=True)
+R = TypeVar("R")
+
+
+class cached_property[T_co](class_parent_cached_property[T_co]):
+    klass: ClassVar[bool | NoneType] = False
+
+    @base_cached_property
+    @override
+    def title(self) -> str:
+        return f"instance data-descriptor {Who.Addr(self)}".strip()
+
+    @override
+    def get_node(self, node: Any) -> Any:
+        if node is None or Is.Class(node):
+            msg = f"{self.header_with_context(node)}, node={node!r}"
+            if node is None and (not self.klass):
+                msg = f"{msg}; looks like a non-instance invocation"
+            raise ContextFaultError(msg)
+        return node
+
+    @override
+    def get_cache(self, node: Any) -> dict[str, Any]:
+        self.get_node(node)
+        name = "__instance_memoized__"
+        cache: dict[str, Any] = {}
+
+        if hasattr(node, "__dict__"):
+            with suppress(KeyError):
+                return node.__dict__[name]
+            setattr(node, name, cache)
+
+        return cache
+
+    @overload
+    def __get__(
+        self,
+        instance: None,
+        klass: Any = ...,
+    ) -> cached_property[T_co]: ...
+
+    @overload
+    def __get__(
+        self,
+        instance: object,
+        klass: Any = ...,
+    ) -> T_co: ...
+
+    @override
+    def __get__(
+        self,
+        instance: object | None,
+        klass: Any = None,
+    ) -> cached_property[T_co] | T_co:
+        if instance is None:
+            raise ContextFaultError(self.header_with_context(klass))
+        return self.call(instance)
+
+    if TYPE_CHECKING:
+
+        @staticmethod
+        @override
+        def with_parent(function: Callable[..., R]) -> cached_property[R]: ...
+
+
+def _cached_property_with_parent[R](
+    function: Callable[..., R],
+) -> cached_property[R]:
+    return cached_property(cast("Callable[[Any], R]", parent_call(function)))
+
+
+cached_property.with_parent = staticmethod(  # type: ignore[method-assign]
+    _cached_property_with_parent,
+)
