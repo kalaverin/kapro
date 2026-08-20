@@ -1,0 +1,15 @@
+.*
+.*/
+/*.md
+*.egg-info/
+__pycache__/
+
+*.py[cdo]
+
+!INSTALL.md
+!README.md
+
+!.env.sample
+!.envrc
+!.gitattributes
+!.gitignore
