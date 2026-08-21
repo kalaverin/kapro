@@ -64,7 +64,7 @@ class post_cached_property[T_co](
 
     @class_cached_property
     @override
-    def here(  # pyrefly: ignore[missing-override-decorator]
+    def here(
         cls,  # noqa: N805
     ) -> type[post_parent_cached_property[Any]]:
         return post_parent_cached_property

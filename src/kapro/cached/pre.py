@@ -64,7 +64,7 @@ class pre_cached_property[T_co](
 
     @class_cached_property
     @override
-    def here(  # pyrefly: ignore[missing-override-decorator]
+    def here(
         cls,  # noqa: N805
     ) -> type[pre_parent_cached_property[Any]]:
         return pre_parent_cached_property

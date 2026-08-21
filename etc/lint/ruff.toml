@@ -103,7 +103,13 @@ multiline-quotes = "double"
 [lint.isort]
 force-to-top = []  # used for override special importers in tests/
 known-first-party = [
-  "kapro"
+  "charded",
+  "kain",
+  "kalib",
+  "kapro",
+  "kasha",
+  "kashasa",
+  "kuit"
 ]
 relative-imports-order = "closest-to-furthest"
 section-order = [

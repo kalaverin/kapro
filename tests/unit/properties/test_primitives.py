@@ -9,6 +9,7 @@ from typing import Any, override
 
 import pytest
 from faker import Faker
+
 from kain import Who
 
 from kapro.class_property import class_property

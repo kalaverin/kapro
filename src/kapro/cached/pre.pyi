@@ -24,6 +24,6 @@ class pre_cached_property[T_co](
     def __set__(self, node: Any, value: Any) -> Any: ...
     @class_cached_property
     @override
-    def here(  # pyrefly: ignore[missing-override-decorator]
+    def here(
         cls,
     ) -> type[pre_parent_cached_property[Any]]: ...

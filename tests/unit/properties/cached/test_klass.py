@@ -8,6 +8,7 @@ from __future__ import annotations
 import pytest
 import time_machine
 from faker import Faker
+
 from kain.classes import Nothing
 
 from kapro.cached.klass import (

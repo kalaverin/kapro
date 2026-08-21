@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, TypeVar, final, overload, override
 
+from kapro import special
 from kapro.cached import (
     cached_property,
     class_cached_property,
@@ -69,4 +70,5 @@ __all__ = (
     "class_property",
     "mixed_property",
     "pin",
+    "special",
 )
