@@ -123,8 +123,19 @@ def make_resolver(pivot: str | object) -> PivotResolver:
     return ObjectPivot(pivot)
 
 
-def resolve_value(field: ProxyField, entity: Any) -> Any:  # noqa: ANN401
-    """Resolve the final value for ``field`` from ``entity``."""
+def resolve_value(
+    field: ProxyField,
+    entity: Any,  # noqa: ANN401
+    *,
+    call_result: bool = False,
+) -> Any:  # noqa: ANN401
+    """Resolve the final value for ``field`` from ``entity``.
+
+    When ``call_result`` is ``True`` and the resolved attribute is
+    callable, it is called with no arguments before ``post`` is applied.
+    This is used by non-raw binders so that ``proxy_to`` feels like a
+    property forwarding the *result* of a pivot method.
+    """
     if entity is None and field.default is not Nothing:
         return apply_default(field, field.default)
 
@@ -134,6 +145,9 @@ def resolve_value(field: ProxyField, entity: Any) -> Any:  # noqa: ANN401
         if field.default is not Nothing:
             return apply_default(field, field.default)
         raise_missing(field, entity, e)
+
+    if call_result and callable(result):
+        result = result()
 
     if field.post is not None:
         result = field.post(result)
@@ -168,12 +182,16 @@ def raise_missing(
     raise Is.classOf(exc)(msg) from exc
 
 
-def make_wrapper(field: ProxyField) -> Callable[[Any], Any]:
+def make_wrapper(
+    field: ProxyField,
+    *,
+    call_result: bool = False,
+) -> Callable[[Any], Any]:
     """Build the wrapper function passed to the binder."""
 
     def wrapper(node: Any) -> Any:  # noqa: ANN401
         entity = field.resolver.resolve(node)
-        return resolve_value(field, entity)
+        return resolve_value(field, entity, call_result=call_result)
 
     wrapper.__name__ = field.name
     wrapper.__qualname__ = field.name
@@ -201,7 +219,7 @@ def attach_proxy_field(
         )
         raise TypeError(msg)
 
-    wrapper = make_wrapper(field)
+    wrapper = make_wrapper(field, call_result=binder is not None)
 
     descriptor = RawBinder()(wrapper) if binder is None else binder(wrapper)
     setattr(cls, field.name, descriptor)

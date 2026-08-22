@@ -13,7 +13,8 @@ inspection) without polluting the class-level cache.
 
 from __future__ import annotations
 
-from typing import Any, TypeVar, override
+from collections.abc import Callable
+from typing import Any, TypeVar, cast, override
 
 from kain import Is
 
@@ -22,10 +23,12 @@ from kapro.cached.mixed import (
     mixed_cached_property,
     mixed_parent_cached_property,
 )
+from kapro.primitives import parent_call
 
 __all__ = ("post_cached_property", "post_parent_cached_property")
 
 T_co = TypeVar("T_co", covariant=True)
+R = TypeVar("R")
 
 
 class post_parent_cached_property[T_co](
@@ -68,3 +71,27 @@ class post_cached_property[T_co](
         cls,  # noqa: N805
     ) -> type[post_parent_cached_property[Any]]:
         return post_parent_cached_property
+
+
+def _post_parent_cached_property_with_parent[R](
+    function: Callable[..., R],
+) -> post_parent_cached_property[R]:
+    return post_parent_cached_property(
+        cast("Callable[[Any], R]", parent_call(function)),
+    )
+
+
+def _post_cached_property_with_parent[R](
+    function: Callable[..., R],
+) -> post_cached_property[R]:
+    return post_cached_property(
+        cast("Callable[[Any], R]", parent_call(function)),
+    )
+
+
+post_parent_cached_property.with_parent = staticmethod(  # type: ignore[method-assign]
+    _post_parent_cached_property_with_parent,
+)
+post_cached_property.with_parent = staticmethod(  # type: ignore[method-assign]
+    _post_cached_property_with_parent,
+)

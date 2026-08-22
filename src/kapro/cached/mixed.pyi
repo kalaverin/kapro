@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from functools import cached_property
-from typing import TYPE_CHECKING, Any, TypeVar, override
+from typing import TYPE_CHECKING, Any, Protocol, TypeVar, override
 
 from kapro.cached.klass import (
     class_cached_property,
@@ -12,6 +12,13 @@ from kapro.cached.klass import (
 __all__ = ("mixed_cached_property", "mixed_parent_cached_property")
 T_co: Any
 R = TypeVar("R")
+T = TypeVar("T")
+
+class _MixedParentCachedPropertyFactory(Protocol):
+    def __call__(
+        self,
+        function: Callable[[Any], T],
+    ) -> mixed_parent_cached_property[T]: ...
 
 class mixed_parent_cached_property[T_co](
     class_parent_cached_property[T_co],
@@ -45,7 +52,7 @@ class mixed_cached_property[T_co](
     @override
     def get_node(self, node: Any) -> Any: ...
     @class_cached_property
-    def here(cls) -> type[mixed_parent_cached_property[Any]]: ...
+    def here(cls) -> _MixedParentCachedPropertyFactory: ...
 
     if TYPE_CHECKING:
         @staticmethod

@@ -7,7 +7,7 @@ single inheritance, diamond, mixin).
 from __future__ import annotations
 
 from dataclasses import FrozenInstanceError, dataclass
-from typing import Any
+from typing import Any, ClassVar
 
 import pytest
 from faker import Faker
@@ -22,6 +22,7 @@ from kapro.cached import (
 )
 from kapro.class_property import class_property, mixed_property
 from kapro.primitives import ContextFaultError, bound_property
+from kapro.special.proxy_to import proxy_to
 
 # ------------------------------------------------------------------
 # Expectation profiles
@@ -378,3 +379,176 @@ class TestDescriptorEdgeCases:
         if profile.class_works:
             _ = Sample.attr
             assert nodes[-1] is Sample
+
+
+# ------------------------------------------------------------------
+# proxy_to matrix
+# ------------------------------------------------------------------
+
+
+class _ProxyTarget:
+    """Target object used by proxy_to edge-case classes."""
+
+    def __init__(self, value: int) -> None:
+        self.value = value
+
+    def get_value(self) -> int:
+        return self.value
+
+
+def _resolve_proxy_value(value: object) -> object:
+    """Return value, calling it first if it is a bound method."""
+    if callable(value):
+        return value()
+    return value
+
+
+def _make_proxy_class(binder: Any, kind: str, value: int) -> type:
+    """Build a class (or subclass) carrying a proxy_to descriptor."""
+    target_obj = _ProxyTarget(value)
+
+    if kind == "normal":
+
+        @proxy_to("target", "get_value", binder=binder)
+        class Sample:
+            target = target_obj
+
+        return Sample
+
+    if kind == "frozen_dataclass":
+
+        @dataclass(frozen=True)
+        @proxy_to("target", "get_value", binder=binder)
+        class FrozenSample:
+            target: ClassVar[_ProxyTarget] = target_obj
+
+        return FrozenSample
+
+    if kind == "slots":
+
+        @proxy_to("target", "get_value", binder=binder)
+        class SlottedSample:
+            __slots__ = ()
+            target = target_obj
+
+        return SlottedSample
+
+    if kind == "single_inheritance":
+
+        @proxy_to("target", "get_value", binder=binder)
+        class Base:
+            target = target_obj
+
+        class Child(Base):
+            pass
+
+        return Child
+
+    if kind == "diamond":
+
+        @proxy_to("target", "get_value", binder=binder)
+        class Base:
+            target = target_obj
+
+        class A(Base):
+            pass
+
+        class B(Base):
+            pass
+
+        class Diamond(A, B):
+            pass
+
+        return Diamond
+
+    if kind == "mixin":
+
+        @proxy_to("target", "get_value", binder=binder)
+        class Mixin:
+            target = target_obj
+
+        class Base:
+            pass
+
+        class Mixed(Base, Mixin):
+            pass
+
+        return Mixed
+
+    msg = f"unknown class kind: {kind}"
+    raise ValueError(msg)
+
+
+_PROXY_INSTANCE_EXCEPTIONS: dict[tuple[Any, str], type[BaseException]] = {
+    (bound_property, "frozen_dataclass"): FrozenInstanceError,
+    (bound_property, "slots"): TypeError,
+    (pin, "frozen_dataclass"): FrozenInstanceError,
+    (pin, "slots"): TypeError,
+    (pin.native, "frozen_dataclass"): FrozenInstanceError,
+    (pin.native, "slots"): TypeError,
+    (pin.any, "frozen_dataclass"): FrozenInstanceError,
+    (pin.any, "slots"): TypeError,
+    (pin.post, "frozen_dataclass"): FrozenInstanceError,
+    (pin.post, "slots"): TypeError,
+}
+
+
+class TestProxyToEdgeCases:
+    """GIVEN proxy_to with every binder on every class shape
+    WHEN accessed on an instance
+    THEN it works or raises as expected.
+    """
+
+    @pytest.fixture(
+        params=[
+            pytest.param(bound_property, id="default-binder"),
+            pytest.param(pin, id="pin"),
+            pytest.param(pin.native, id="pin-native"),
+            pytest.param(pin.cls, id="pin-cls"),
+            pytest.param(pin.any, id="pin-any"),
+            pytest.param(pin.pre, id="pin-pre"),
+            pytest.param(pin.post, id="pin-post"),
+            pytest.param(class_property, id="class-property"),
+            pytest.param(mixed_property, id="mixed-property"),
+            pytest.param(None, id="raw-binder"),
+        ],
+    )
+    def proxy_binder(self, request: pytest.FixtureRequest) -> Any:
+        return request.param
+
+    @pytest.fixture(
+        params=[
+            pytest.param("normal", id="normal"),
+            pytest.param("frozen_dataclass", id="frozen-dataclass"),
+            pytest.param("slots", id="slots"),
+            pytest.param("single_inheritance", id="single-inheritance"),
+            pytest.param("diamond", id="diamond"),
+            pytest.param("mixin", id="mixin"),
+        ],
+    )
+    def proxy_class_kind(self, request: pytest.FixtureRequest) -> str:
+        return request.param
+
+    def test_proxy_to_instance_access(
+        self,
+        fake: Faker,
+        proxy_binder: Any,
+        proxy_class_kind: str,
+    ) -> None:
+        """GIVEN proxy_to descriptor on a class
+        WHEN accessed on an instance
+        THEN it forwards correctly or raises for frozen/slots.
+        """
+        expected = fake.pyint()
+        cls = _make_proxy_class(proxy_binder, proxy_class_kind, expected)
+        expected_exception = _PROXY_INSTANCE_EXCEPTIONS.get(
+            (proxy_binder, proxy_class_kind),
+        )
+
+        if expected_exception is not None:
+            instance = cls()
+            with pytest.raises(expected_exception):
+                _ = instance.get_value
+        else:
+            instance = cls()
+            assert _resolve_proxy_value(instance.get_value) == expected

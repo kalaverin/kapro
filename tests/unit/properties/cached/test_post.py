@@ -243,6 +243,62 @@ class TestPostCachedProperty:
         assert instance.value == base_value + increment
 
 
+class TestWithParent:
+    """GIVEN post_* descriptors with with_parent
+    WHEN the decorator is used
+    THEN it returns the correct descriptor type and preserves semantics.
+    """
+
+    def test_post_parent_with_parent_returns_post_parent_type(
+        self,
+        fake: Faker,
+    ) -> None:
+        """post_parent_cached_property.with_parent returns its own type."""
+
+        class Parent:
+            @post_parent_cached_property
+            def value(cls) -> int:
+                return fake.pyint()
+
+        class Child(Parent):
+            @post_parent_cached_property.with_parent
+            def value(cls, parent_result: int) -> int:
+                return parent_result
+
+        prop = Child.__dict__["value"]
+        assert isinstance(prop, post_parent_cached_property)
+        assert not isinstance(prop, mixed_cached_property)
+
+    def test_post_cached_with_parent_returns_post_cached_type(
+        self,
+        fake: Faker,
+    ) -> None:
+        """post_cached_property.with_parent returns its own type
+        and still skips class caching.
+        """
+        counter = 0
+
+        class Parent:
+            @post_cached_property
+            def value(cls) -> int:
+                return 1
+
+        class Child(Parent):
+            @post_cached_property.with_parent
+            def value(cls, parent_result: int) -> int:
+                nonlocal counter
+                counter += 1
+                return parent_result + counter
+
+        first = Child.value
+        second = Child.value
+
+        assert first != second
+        assert counter == 2
+        prop = Child.__dict__["value"]
+        assert isinstance(prop, post_cached_property)
+
+
 # ------------------------------------------------------------------
 # Annotation inference
 # ------------------------------------------------------------------

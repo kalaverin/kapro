@@ -125,7 +125,7 @@ class TestProxyToPivotTypes:
 
         instance = Proxy()
 
-        assert instance.get_value() == expected
+        assert instance.get_value == expected
 
     def test_object_pivot_forwards_to_external_object(
         self,
@@ -144,7 +144,7 @@ class TestProxyToPivotTypes:
 
         instance = Proxy()
 
-        assert instance.get_label() == expected
+        assert instance.get_label == expected
 
     def test_none_pivot_with_default_returns_default(
         self,
@@ -357,14 +357,14 @@ class TestProxyToForwarding:
         self,
         fake: Faker,
     ) -> None:
-        """GIVEN a proxied method that accepts arguments
+        """GIVEN a proxied method that accepts arguments with a raw binder
         WHEN called with arguments
         THEN they are forwarded to the target method.
         """
         multiplier = fake.pyint(min_value=2, max_value=10)
         value = fake.pyint()
 
-        @proxy_to("target", "scale")
+        @proxy_to("target", "scale", binder=None)
         class Proxy:
             target = _CallableTarget(multiplier)
 
@@ -421,7 +421,7 @@ class TestProxyToSafety:
                 return fake.pyint()
 
         instance = Proxy()
-        assert instance.get_value() == expected
+        assert instance.get_value == expected
 
     def test_safe_true_blocks_private_attribute(
         self,
@@ -460,7 +460,7 @@ class TestProxyToSafety:
                 return fake.pyint()
 
         instance = Proxy()
-        assert instance._private() == expected
+        assert instance._private == expected
 
 
 # ------------------------------------------------------------------
@@ -719,7 +719,7 @@ class TestProxyToInheritance:
             pass
 
         instance = Child()
-        assert instance.get_value() == second
+        assert instance.get_value == second
 
 
 # ------------------------------------------------------------------
@@ -755,7 +755,7 @@ class TestProxyToFrozenDataclass:
         instance = Proxy()
 
         with pytest.raises(FrozenInstanceError):
-            _ = instance.get_value()
+            _ = instance.get_value
 
     def test_none_binder_works_on_frozen_dataclass(
         self,
@@ -847,7 +847,7 @@ class TestProxyToSlots:
 
         instance = Proxy()
 
-        assert instance.get_value() == expected
+        assert instance.get_value == expected
 
 
 # ------------------------------------------------------------------
@@ -885,7 +885,7 @@ class TestProxyToComplexInheritance:
             pass
 
         instance = Bottom()
-        assert instance.get_value() == expected
+        assert instance.get_value == expected
 
     def test_mixin_inheritance_resolves_proxy(
         self,
@@ -908,7 +908,7 @@ class TestProxyToComplexInheritance:
             pass
 
         instance = Child()
-        assert instance.get_value() == expected
+        assert instance.get_value == expected
 
 
 # ------------------------------------------------------------------

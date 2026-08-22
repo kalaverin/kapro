@@ -13,8 +13,9 @@ and identical for all instances) but still callable on instances when needed.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from contextlib import suppress
-from typing import Any, TypeVar, override
+from typing import Any, TypeVar, cast, override
 
 from kain import Is
 
@@ -23,11 +24,12 @@ from kapro.cached.mixed import (
     mixed_cached_property,
     mixed_parent_cached_property,
 )
-from kapro.primitives import AttributeExceptionError
+from kapro.primitives import AttributeExceptionError, parent_call
 
 __all__ = ("pre_cached_property", "pre_parent_cached_property")
 
 T_co = TypeVar("T_co", covariant=True)
+R = TypeVar("R")
 
 
 class pre_parent_cached_property[T_co](
@@ -118,3 +120,27 @@ class pre_cached_property[T_co](
         cls,  # noqa: N805
     ) -> type[pre_parent_cached_property[Any]]:
         return pre_parent_cached_property
+
+
+def _pre_parent_cached_property_with_parent[R](
+    function: Callable[..., R],
+) -> pre_parent_cached_property[R]:
+    return pre_parent_cached_property(
+        cast("Callable[[Any], R]", parent_call(function)),
+    )
+
+
+def _pre_cached_property_with_parent[R](
+    function: Callable[..., R],
+) -> pre_cached_property[R]:
+    return pre_cached_property(
+        cast("Callable[[Any], R]", parent_call(function)),
+    )
+
+
+pre_parent_cached_property.with_parent = staticmethod(  # type: ignore[method-assign]
+    _pre_parent_cached_property_with_parent,
+)
+pre_cached_property.with_parent = staticmethod(  # type: ignore[method-assign]
+    _pre_cached_property_with_parent,
+)

@@ -329,8 +329,8 @@ class bound_property[T_co](BaseProperty[T_co]):
 
         if is_frozen(node):
             msg = (
-                f"{self.header_with_context(node)} is frozen "
-                "and cannot be cached"
+                f"{self.header_with_context(node)} is read-only "
+                "on frozen instance"
             )
             raise FrozenInstanceError(msg)
 

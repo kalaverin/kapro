@@ -244,6 +244,63 @@ class TestPreCachedProperty:
         assert instance.value == base_value + increment
 
 
+class TestWithParent:
+    """GIVEN pre_* descriptors with with_parent
+    WHEN the decorator is used
+    THEN it returns the correct descriptor type and preserves semantics.
+    """
+
+    def test_pre_parent_with_parent_returns_pre_parent_type(
+        self,
+        fake: Faker,
+    ) -> None:
+        """pre_parent_cached_property.with_parent returns its own type."""
+
+        class Parent:
+            @pre_parent_cached_property
+            def value(cls) -> int:
+                return fake.pyint()
+
+        class Child(Parent):
+            @pre_parent_cached_property.with_parent
+            def value(cls, parent_result: int) -> int:
+                return parent_result
+
+        prop = Child.__dict__["value"]
+        assert isinstance(prop, pre_parent_cached_property)
+        assert not isinstance(prop, mixed_cached_property)
+
+    def test_pre_cached_with_parent_returns_pre_cached_type(
+        self,
+        fake: Faker,
+    ) -> None:
+        """pre_cached_property.with_parent returns its own type
+        and still skips instance caching.
+        """
+        counter = 0
+
+        class Parent:
+            @pre_cached_property
+            def value(self) -> int:
+                return 1
+
+        class Child(Parent):
+            @pre_cached_property.with_parent
+            def value(self, parent_result: int) -> int:
+                nonlocal counter
+                counter += 1
+                return parent_result + counter
+
+        instance = Child()
+        first = instance.value
+        second = instance.value
+
+        assert first != second
+        assert counter == 2
+        prop = Child.__dict__["value"]
+        assert isinstance(prop, pre_cached_property)
+
+
 # ------------------------------------------------------------------
 # Annotation inference
 # ------------------------------------------------------------------
