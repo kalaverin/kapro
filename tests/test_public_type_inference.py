@@ -31,7 +31,7 @@ class Parent:
     """Exercise all public kapro descriptors and ``pin`` flavors."""
 
     _faker: ClassVar[Faker]
-    history: ClassVar[dict[str, list[object]]] = {}
+    history: ClassVar[dict[str, list[object]]]
 
     @class_property
     def name(cls) -> str:
@@ -90,7 +90,7 @@ class HereBase:
     """Test .here semantics with inheritance and overrides."""
 
     _faker: ClassVar[Faker]
-    history: ClassVar[dict[str, list[object]]] = {}
+    history: ClassVar[dict[str, list[object]]]
 
     @pin.cls.here
     def cls_here(cls) -> int:
@@ -151,7 +151,7 @@ class Engine:
     """Target object for ``proxy_to``."""
 
     _faker: ClassVar[Faker]
-    history: ClassVar[list[int]] = []
+    history: ClassVar[list[int]]
 
     def power(self) -> int:
         value = self._faker.pyint()

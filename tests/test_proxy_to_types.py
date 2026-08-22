@@ -10,14 +10,20 @@ below only verify that the decorated class itself keeps its type.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, assert_type
+from typing import TYPE_CHECKING, Final, assert_type
+
+from faker import Faker
 
 from kapro.special.proxy_to import proxy_to
+
+TYPE_STUB_SEED: Final[int] = 0
+_TYPE_FAKER = Faker(["en_US"])
+_TYPE_FAKER.seed_instance(TYPE_STUB_SEED)
 
 
 class _Engine:
     def power(self) -> int:
-        return 42
+        return _TYPE_FAKER.pyint()
 
 
 @proxy_to("engine", "power")

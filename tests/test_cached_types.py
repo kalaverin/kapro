@@ -6,7 +6,9 @@ Run ``basedpyright tests/test_cached_types.py`` or
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, assert_type, override
+from typing import TYPE_CHECKING, Final, assert_type, override
+
+from faker import Faker
 
 from kapro.cached import (
     cached_property,
@@ -18,66 +20,70 @@ from kapro.cached import (
     pre_cached_property,
 )
 
+TYPE_STUB_SEED: Final[int] = 0
+_TYPE_FAKER = Faker(["en_US"])
+_TYPE_FAKER.seed_instance(TYPE_STUB_SEED)
+
 
 class Foo:
     @cached_property
     def inst_prop(self) -> int:
-        return 42
+        return _TYPE_FAKER.pyint()
 
     @class_cached_property
     def cls_prop(cls) -> str:
-        return "hello"
+        return _TYPE_FAKER.word()
 
     @class_parent_cached_property
     def cls_parent_prop(cls) -> str:
-        return "parent"
+        return _TYPE_FAKER.word()
 
     @mixed_cached_property
     def mixed_prop(self_or_cls: object) -> int:
-        return 42
+        return _TYPE_FAKER.pyint()
 
     @mixed_parent_cached_property
     def mixed_parent_prop(self_or_cls: object) -> int:
-        return 42
+        return _TYPE_FAKER.pyint()
 
     @pre_cached_property
     def pre_prop(self_or_cls: object) -> str:
-        return "pre"
+        return _TYPE_FAKER.word()
 
     @post_cached_property
     def post_prop(self_or_cls: object) -> str:
-        return "post"
+        return _TYPE_FAKER.word()
 
 
 class Parent:
     @cached_property
     def inst_parent(self) -> int:
-        return 42
+        return _TYPE_FAKER.pyint()
 
     @class_cached_property
     def cls_parent(self) -> str:
-        return "parent"
+        return _TYPE_FAKER.word()
 
     @mixed_cached_property
     def mixed_parent(self_or_cls: object) -> int:
-        return 42
+        return _TYPE_FAKER.pyint()
 
 
 class Child(Parent):
     @cached_property.with_parent  # type: ignore[assignment][any]
     @override
     def inst_parent(self, parent_value: int) -> int:
-        return parent_value + 10
+        return parent_value + _TYPE_FAKER.pyint()
 
     @class_cached_property.with_parent  # type: ignore[assignment][any]
     @override
     def cls_parent(self, parent_value: str) -> str:
-        return f"child_{parent_value}"
+        return f"{_TYPE_FAKER.word()}_{parent_value}"
 
     @mixed_cached_property.with_parent  # type: ignore[assignment][any]
     @override
     def mixed_parent(self_or_cls: object, parent_value: int) -> int:
-        return parent_value + 10
+        return parent_value + _TYPE_FAKER.pyint()
 
 
 def test_type_inference_dummy() -> None:

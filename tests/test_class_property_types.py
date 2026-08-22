@@ -6,19 +6,25 @@ Run ``basedpyright tests/test_class_property_types.py`` or
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, assert_type, override
+from typing import TYPE_CHECKING, Final, assert_type, override
+
+from faker import Faker
 
 from kapro.class_property import class_property, mixed_property
+
+TYPE_STUB_SEED: Final[int] = 0
+_TYPE_FAKER = Faker(["en_US"])
+_TYPE_FAKER.seed_instance(TYPE_STUB_SEED)
 
 
 class Foo:
     @class_property
     def cls_prop(cls) -> int:
-        return 42
+        return _TYPE_FAKER.pyint()
 
     @mixed_property
     def mixed_prop(self_or_cls) -> str:
-        return "hello"
+        return _TYPE_FAKER.word()
 
 
 def test_type_inference_dummy() -> None:
@@ -28,23 +34,23 @@ def test_type_inference_dummy() -> None:
 class Parent:
     @class_property
     def cls_parent(cls) -> str:
-        return "parent"
+        return _TYPE_FAKER.word()
 
     @mixed_property
     def mixed_parent(self_or_cls) -> str:
-        return "parent"
+        return _TYPE_FAKER.word()
 
 
 class Child(Parent):
     @class_property.with_parent  # type: ignore[assignment][any]
     @override
     def cls_parent(cls, parent_value: str) -> str:
-        return f"child_{parent_value}"
+        return f"{_TYPE_FAKER.word()}_{parent_value}"
 
     @mixed_property.with_parent  # type: ignore[assignment][any]
     @override
     def mixed_parent(self_or_cls, parent_value: str) -> str:
-        return f"child_{parent_value}"
+        return f"{_TYPE_FAKER.word()}_{parent_value}"
 
 
 if TYPE_CHECKING:

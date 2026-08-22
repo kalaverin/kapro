@@ -6,36 +6,42 @@ Run ``basedpyright tests/test_pin_types.py`` or
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, assert_type
+from typing import TYPE_CHECKING, Final, assert_type
+
+from faker import Faker
 
 from kapro import pin
 from kapro.cached import cached_property
+
+TYPE_STUB_SEED: Final[int] = 0
+_TYPE_FAKER = Faker(["en_US"])
+_TYPE_FAKER.seed_instance(TYPE_STUB_SEED)
 
 
 class Foo:
     @pin
     def inst_prop(self) -> int:
-        return 42
+        return _TYPE_FAKER.pyint()
 
     @pin.native
     def native_prop(self) -> str:
-        return "hello"
+        return _TYPE_FAKER.word()
 
     @pin.cls
     def cls_prop(cls) -> int:
-        return 42
+        return _TYPE_FAKER.pyint()
 
     @pin.any
     def any_prop(self_or_cls: object) -> str:
-        return "any"
+        return _TYPE_FAKER.word()
 
     @pin.pre
     def pre_prop(self_or_cls: object) -> int:
-        return 1
+        return _TYPE_FAKER.pyint()
 
     @pin.post
     def post_prop(self_or_cls: object) -> int:
-        return 2
+        return _TYPE_FAKER.pyint()
 
 
 def test_type_inference_dummy() -> None:
