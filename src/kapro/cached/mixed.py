@@ -19,6 +19,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from contextlib import suppress
+from dataclasses import FrozenInstanceError
 from functools import cached_property
 from typing import TYPE_CHECKING, Any, TypeVar, cast, override
 
@@ -29,7 +30,7 @@ from kapro.cached.klass import (
     class_cached_property,
     class_parent_cached_property,
 )
-from kapro.primitives import ContextFaultError, parent_call
+from kapro.primitives import ContextFaultError, is_frozen, parent_call
 
 __all__ = ("mixed_cached_property", "mixed_parent_cached_property")
 
@@ -66,14 +67,35 @@ class mixed_parent_cached_property[T_co](
 
     @override
     def get_cache(self, node: Any) -> dict[str, Any]:
-        self.get_node(node)
-        name = f"__{('instance', 'class')[Is.Class(node)]}_memoized__"
-        if hasattr(node, "__dict__"):
-            with suppress(KeyError):
-                return cast("dict[str, Any]", node.__dict__[name])
-        cache: dict[str, Any] = {}
-        setattr(node, name, cache)
-        return cache
+        pivot = self.get_node(node)
+
+        name = f"__{('instance', 'class')[Is.Class(pivot)]}_memoized__"
+        if Is.Class(pivot):
+            if hasattr(pivot, "__dict__"):
+                with suppress(KeyError):
+                    return cast("dict[str, Any]", pivot.__dict__[name])
+            cache: dict[str, Any] = {}
+            setattr(pivot, name, cache)
+            return cache
+
+        if is_frozen(pivot):
+            msg = (
+                f"{self.header_with_context(pivot)} is frozen "
+                "and cannot be cached"
+            )
+            raise FrozenInstanceError(msg)
+
+        instance_cache = getattr(pivot, "__dict__", None)
+        if instance_cache is None:
+            msg = f"{self.header_with_context(pivot)} has no __dict__"
+            raise TypeError(msg)
+
+        with suppress(KeyError):
+            return instance_cache[name]
+
+        new_cache: dict[str, Any] = {}
+        instance_cache[name] = new_cache
+        return new_cache
 
     @override
     def __get__(self, instance: Any, klass: Any = None) -> T_co:

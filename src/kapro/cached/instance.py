@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from contextlib import suppress
+from dataclasses import FrozenInstanceError
 from functools import cached_property as base_cached_property
 from types import NoneType
 from typing import (
@@ -28,7 +29,7 @@ from typing import (
 from kain import Is, Who
 
 from kapro.cached.klass import class_parent_cached_property
-from kapro.primitives import ContextFaultError, parent_call
+from kapro.primitives import ContextFaultError, is_frozen, parent_call
 
 __all__ = ("cached_property",)
 
@@ -55,16 +56,27 @@ class cached_property[T_co](class_parent_cached_property[T_co]):
 
     @override
     def get_cache(self, node: Any) -> dict[str, Any]:
-        self.get_node(node)
+        pivot = self.get_node(node)
+
+        if is_frozen(pivot):
+            msg = (
+                f"{self.header_with_context(pivot)} is frozen "
+                "and cannot be cached"
+            )
+            raise FrozenInstanceError(msg)
+
+        cache = getattr(pivot, "__dict__", None)
+        if cache is None:
+            msg = f"{self.header_with_context(pivot)} has no __dict__"
+            raise TypeError(msg)
+
         name = "__instance_memoized__"
-        cache: dict[str, Any] = {}
+        with suppress(KeyError):
+            return cache[name]
 
-        if hasattr(node, "__dict__"):
-            with suppress(KeyError):
-                return node.__dict__[name]
-            setattr(node, name, cache)
-
-        return cache
+        new_cache: dict[str, Any] = {}
+        cache[name] = new_cache
+        return new_cache
 
     @overload
     def __get__(

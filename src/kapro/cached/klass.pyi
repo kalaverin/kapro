@@ -23,6 +23,7 @@ class class_parent_cached_property[T_co](
     BaseProperty[T_co],
     CustomCallbackMixin,
 ):
+    is_actual: Any
     def __init__(
         self: Any,
         function: Callable[[Any], T_co],

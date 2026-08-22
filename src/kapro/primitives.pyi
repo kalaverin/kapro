@@ -4,11 +4,24 @@ from collections.abc import Callable
 from functools import cached_property
 from typing import Any, Self, overload, override
 
-__all__ = ("bound_property", "parent_call")
+__all__ = (
+    "AttributeExceptionError",
+    "BaseProperty",
+    "ContextFaultError",
+    "Nothing",
+    "PropertyError",
+    "ReadOnlyError",
+    "bound_property",
+    "extract_wrapped",
+    "get_name",
+    "is_frozen",
+    "parent_call",
+)
 Nothing: Any
 T_co: Any
 
 def get_name(func: object) -> str: ...
+def is_frozen(node: object) -> bool: ...
 
 class PropertyError(Exception):
     pass
@@ -26,15 +39,12 @@ class AttributeExceptionError(PropertyError):
 
 def extract_wrapped(obj: Any) -> Callable[..., Any]: ...
 def parent_call(func: Callable[..., Any]) -> Callable[..., Any]: ...
-def invocation_context_check(
-    func: Callable[..., Any],
-) -> Callable[..., Any]: ...
 
 class BaseProperty[T_co]:
     function: Callable[..., Any]
     @classmethod
     def with_parent(cls, function: Callable[..., Any]) -> Self: ...
-    def __init__(self: Any, function: Callable[..., Any]) -> None: ...
+    def __init__(self, function: Callable[..., T_co]) -> None: ...
     @cached_property
     def name(self) -> str: ...
     @cached_property

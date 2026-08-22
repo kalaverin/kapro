@@ -115,15 +115,16 @@ _PROFILES: dict[Any, _Profile] = {
 
 
 _INSTANCE_EXCEPTIONS: dict[tuple[Any, str], type[BaseException]] = {
+    (bound_property, "frozen_dataclass"): FrozenInstanceError,
     (bound_property, "slots"): TypeError,
+    (pin, "frozen_dataclass"): FrozenInstanceError,
     (pin, "slots"): TypeError,
     (pin.native, "frozen_dataclass"): FrozenInstanceError,
+    (pin.native, "slots"): TypeError,
     (pin.any, "frozen_dataclass"): FrozenInstanceError,
-    (pin.any, "slots"): AttributeError,
-    (pin.pre, "frozen_dataclass"): FrozenInstanceError,
-    (pin.pre, "slots"): AttributeError,
+    (pin.any, "slots"): TypeError,
     (pin.post, "frozen_dataclass"): FrozenInstanceError,
-    (pin.post, "slots"): AttributeError,
+    (pin.post, "slots"): TypeError,
 }
 
 

@@ -13,6 +13,7 @@ and identical for all instances) but still callable on instances when needed.
 
 from __future__ import annotations
 
+from contextlib import suppress
 from typing import Any, TypeVar, override
 
 from kain import Is
@@ -22,6 +23,7 @@ from kapro.cached.mixed import (
     mixed_cached_property,
     mixed_parent_cached_property,
 )
+from kapro.primitives import AttributeExceptionError
 
 __all__ = ("pre_cached_property", "pre_parent_cached_property")
 
@@ -39,6 +41,30 @@ class pre_parent_cached_property[T_co](
     """
 
     @override
+    def call(self, node: Any, *args: Any, **kw: Any) -> T_co:
+        pivot = self.get_node(node)
+
+        if not Is.Class(pivot):
+            try:
+                return self.function(node)
+            except AttributeError as e:
+                raise AttributeExceptionError(e) from e
+
+        with suppress(KeyError):
+            stored = self.get_cache(pivot)[self.name]
+            if not self.is_actual:
+                return stored
+            value, stamp = stored
+            if self.is_actual(self, pivot, stamp) is True:
+                return value
+
+        try:
+            value = self.function(node)
+        except AttributeError as e:
+            raise AttributeExceptionError(e) from e
+        return self.__set__(pivot, value)
+
+    @override
     def __set__(self, node: Any, value: Any) -> Any:
         self.get_node(node)
         if not Is.Class(node):
@@ -54,6 +80,30 @@ class pre_cached_property[T_co](
     Same semantics as ``pre_parent_cached_property`` but caches directly on
     the accessed class rather than the owning parent class.
     """
+
+    @override
+    def call(self, node: Any, *args: Any, **kw: Any) -> T_co:
+        pivot = self.get_node(node)
+
+        if not Is.Class(pivot):
+            try:
+                return self.function(node)
+            except AttributeError as e:
+                raise AttributeExceptionError(e) from e
+
+        with suppress(KeyError):
+            stored = self.get_cache(pivot)[self.name]
+            if not self.is_actual:
+                return stored
+            value, stamp = stored
+            if self.is_actual(self, pivot, stamp) is True:
+                return value
+
+        try:
+            value = self.function(node)
+        except AttributeError as e:
+            raise AttributeExceptionError(e) from e
+        return self.__set__(pivot, value)
 
     @override
     def __set__(self, node: Any, value: Any) -> Any:

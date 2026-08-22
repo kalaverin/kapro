@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import FrozenInstanceError, dataclass
 
 import pytest
 
@@ -19,36 +19,34 @@ class _Frozen:
     value: int = 5
 
 
-@pytest.mark.xfail(
-    reason="bound_property writes to __dict__ directly, bypassing frozen",
-)
 def test_bound_property_on_frozen_dataclass_raises() -> None:
     """Frozen instances should be immutable for all instance descriptors."""
 
     class Owner:
         attr = bound_property(lambda node: node.value * 2)
 
-    Owner.attr.__get__(_Frozen(7), Owner)
+    descriptor = Owner.__dict__["attr"]
+    frozen = _Frozen(7)
+    with pytest.raises(FrozenInstanceError):
+        descriptor.__get__(frozen, Owner)
 
 
-@pytest.mark.xfail(
-    reason="cached_property fails on frozen, bound_property silently works",
-)
 def test_frozen_dataclass_cached_and_bound_property_agree() -> None:
-    """Both cached and bound instance properties should behave the same."""
+    """Both cached and bound instance properties raise FrozenInstanceError."""
 
     class Owner:
         bp = bound_property(lambda node: node.value * 2)
         cp = cached_property(lambda node: node.value * 2)
 
+    descriptor_bp = Owner.__dict__["bp"]
+    descriptor_cp = Owner.__dict__["cp"]
     frozen = _Frozen(7)
-    assert Owner.bp.__get__(frozen, Owner) == 14
-    assert Owner.cp.__get__(frozen, Owner) == 14
+    with pytest.raises(FrozenInstanceError):
+        descriptor_bp.__get__(frozen, Owner)
+    with pytest.raises(FrozenInstanceError):
+        descriptor_cp.__get__(frozen, Owner)
 
 
-@pytest.mark.xfail(
-    reason="pre_cached_property still tries to create an instance cache",
-)
 def test_pre_cached_property_on_slots_works() -> None:
     """pre_cached_property skips instance caching, so slots should be fine."""
 
@@ -59,14 +57,12 @@ def test_pre_cached_property_on_slots_works() -> None:
     assert Slotted().attr == 42
 
 
-@pytest.mark.xfail(
-    reason="mixed_cached_property does not handle missing __dict__",
-)
-def test_mixed_cached_property_on_slots_works() -> None:
-    """cached_property handles slots; mixed_cached_property should too."""
+def test_mixed_cached_property_on_slots_raises() -> None:
+    """mixed_cached_property needs instance __dict__; slots raise TypeError."""
 
     class Slotted:
         __slots__ = ()
         attr = mixed_cached_property(lambda _: 42)
 
-    assert Slotted().attr == 42
+    with pytest.raises(TypeError):
+        Slotted().attr

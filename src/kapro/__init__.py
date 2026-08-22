@@ -11,11 +11,7 @@ from kapro.cached import (
     pre_cached_property,
 )
 from kapro.class_property import class_property, mixed_property
-from kapro.primitives import (
-    ContextFaultError,
-    Nothing,
-    bound_property,
-)
+from kapro.primitives import Nothing, bound_property
 
 T_co = TypeVar("T_co", covariant=True)
 
@@ -48,22 +44,7 @@ class pin[T_co](bound_property[T_co]):  # noqa: N801
         node: object | None,
         klass: Any = Nothing,
     ) -> pin[T_co] | T_co:
-        if node is None:
-            raise ContextFaultError(self.header_with_context(klass))
-
-        cache = getattr(node, "__dict__", None)
-        if cache is None:
-            raise TypeError(
-                f"{self.header_with_context(node)} has no __dict__",
-            )
-
-        try:
-            return cache[self.name]  # type: ignore[no-any-return, index]
-
-        except KeyError:
-            value = self.function(node)
-            cache[self.name] = value  # type: ignore[index]
-            return value  # type: ignore[no-any-return]
+        return super().__get__(node, klass)
 
 
 __all__ = (

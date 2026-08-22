@@ -28,6 +28,7 @@ Key concepts
 from __future__ import annotations
 
 from collections.abc import Callable
+from dataclasses import FrozenInstanceError, is_dataclass
 from functools import cached_property, wraps
 from inspect import iscoroutinefunction
 from typing import Any, Self, TypeVar, cast, overload, override
@@ -36,8 +37,26 @@ from kain import Is, Who
 from kain.classes import Missing
 from kain.internals import get_attr
 
-__all__ = ("bound_property", "parent_call")
+__all__ = (
+    "AttributeExceptionError",
+    "BaseProperty",
+    "ContextFaultError",
+    "Nothing",
+    "PropertyError",
+    "ReadOnlyError",
+    "bound_property",
+    "extract_wrapped",
+    "get_name",
+    "is_frozen",
+    "parent_call",
+)
 Nothing = Missing()
+
+
+def is_frozen(node: object) -> bool:
+    params = getattr(node, "__dataclass_params__", None)
+    return is_dataclass(node) and params is not None and params.frozen
+
 
 T_co = TypeVar("T_co", covariant=True)
 
@@ -207,7 +226,7 @@ class BaseProperty[T_co]:
     def with_parent(cls, function: Callable[..., Any]) -> Self:
         return cls(parent_call(function))
 
-    def __init__(self, function: Callable[..., Any]) -> None:
+    def __init__(self, function: Callable[..., T_co]) -> None:
         self.function: Callable[..., Any] = function
 
     @cached_property
@@ -307,6 +326,13 @@ class bound_property[T_co](BaseProperty[T_co]):
     ) -> bound_property[T_co] | T_co:
         if node is None:
             raise ContextFaultError(self.header_with_context(klass))
+
+        if is_frozen(node):
+            msg = (
+                f"{self.header_with_context(node)} is frozen "
+                "and cannot be cached"
+            )
+            raise FrozenInstanceError(msg)
 
         cache = getattr(node, "__dict__", None)
         if cache is None:

@@ -5,7 +5,7 @@ Arrange-Act-Assert pattern, BDD docstrings, heavy parameterization.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import FrozenInstanceError, dataclass, field
 from typing import TYPE_CHECKING, Any, ClassVar
 
 import pytest
@@ -754,7 +754,8 @@ class TestProxyToFrozenDataclass:
 
         instance = Proxy()
 
-        assert instance.get_value() == instance.target.get_value()
+        with pytest.raises(FrozenInstanceError):
+            _ = instance.get_value()
 
     def test_none_binder_works_on_frozen_dataclass(
         self,

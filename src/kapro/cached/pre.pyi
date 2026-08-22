@@ -15,11 +15,15 @@ class pre_parent_cached_property[T_co](
     mixed_parent_cached_property[T_co],
 ):
     @override
+    def call(self, node: Any, *args: Any, **kw: Any) -> T_co: ...
+    @override
     def __set__(self, node: Any, value: Any) -> Any: ...
 
 class pre_cached_property[T_co](
     mixed_cached_property[T_co],
 ):
+    @override
+    def call(self, node: Any, *args: Any, **kw: Any) -> T_co: ...
     @override
     def __set__(self, node: Any, value: Any) -> Any: ...
     @class_cached_property

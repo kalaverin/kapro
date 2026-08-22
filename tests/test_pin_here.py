@@ -254,8 +254,7 @@ class TestPreCachedPropertyHere:
         assert obj.prop == 42
         assert obj.prop == 42
         assert Base.counter == 2
-        cache = obj.__dict__["__instance_memoized__"]
-        assert "prop" not in cache
+        assert "__instance_memoized__" not in obj.__dict__
 
     def test_here_ttl(self) -> None:
         class Base:

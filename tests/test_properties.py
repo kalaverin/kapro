@@ -312,8 +312,7 @@ class TestPinPre:
         assert obj.prop == 42
         assert obj.prop == 42
         assert Foo.counter == 2
-        cache = obj.__dict__["__instance_memoized__"]
-        assert "prop" not in cache
+        assert "__instance_memoized__" not in obj.__dict__
 
     def test_class_and_instance_are_independent(self) -> None:
         class Foo:
