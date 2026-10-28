@@ -69,7 +69,7 @@ pip install kapro
 [ref: #quick-start]
 
 ```python
-from kapro import class_property, mixed_property, pin
+from zx.prop import class_property, mixed_property, pin
 
 
 class Config:
@@ -104,7 +104,7 @@ assert Config().value == 42
 A class-level descriptor. The decorated function receives the class, and the result is computed every time it is accessed (no caching).
 
 ```python
-from kapro import class_property
+from zx.prop import class_property
 
 
 class Config:
@@ -124,7 +124,7 @@ assert Config().name == "config"
 A descriptor that is invoked both on class access and on instance access. The decorated function receives either the class or the instance.
 
 ```python
-from kapro import mixed_property
+from zx.prop import mixed_property
 
 
 class User:
@@ -158,7 +158,7 @@ assert User(7).label == "user #7"
 | `@pin.post` | instance only | class + instance |
 
 ```python
-from kapro import pin
+from zx.prop import pin
 
 
 class Service:
@@ -183,7 +183,7 @@ assert Service.version == "1.0"      # computed once per accessed class
 The standard instance-level cached property. Use it instead of plain `@pin` when you need the cache stored separately from the attribute name, or when the decorated function is a coroutine.
 
 ```python
-from kapro import pin
+from zx.prop import pin
 
 
 class Sample:
@@ -199,7 +199,7 @@ class Sample:
 A class-level cached property. Each accessed class gets its own cache, so subclasses do not share cached values with their parents.
 
 ```python
-from kapro import pin
+from zx.prop import pin
 
 
 class Base:
@@ -225,7 +225,7 @@ assert "__class_memoized__" in Child.__dict__
 Caches on the accessed node: the instance for instance access, the accessed class for class access.
 
 ```python
-from kapro import pin
+from zx.prop import pin
 
 
 class Sample:
@@ -245,7 +245,7 @@ assert Sample.value == 1
 An asymmetric cached descriptor: it caches only on class access. Instance access recomputes every time.
 
 ```python
-from kapro import pin
+from zx.prop import pin
 
 
 class Sample:
@@ -261,7 +261,7 @@ class Sample:
 An asymmetric cached descriptor: it caches only on instance access. Class access recomputes every time.
 
 ```python
-from kapro import pin
+from zx.prop import pin
 
 
 class Sample:
@@ -283,7 +283,7 @@ By default, class-level `pin.*` flavors cache on the class that was accessed. Us
 `@pin.cls` caches on the accessed class; `@pin.cls.here` caches on the owner class.
 
 ```python
-from kapro import pin
+from zx.prop import pin
 
 
 class Base:
@@ -309,7 +309,7 @@ assert "__class_memoized__" not in Child.__dict__   # shared with owner
 Instance access caches on the instance, but class access caches on the owner class.
 
 ```python
-from kapro import pin
+from zx.prop import pin
 
 
 class Base:
@@ -337,7 +337,7 @@ assert "__class_memoized__" not in Child.__dict__
 Class access caches on the owner class, so subclasses share the same class-level cache.
 
 ```python
-from kapro import pin
+from zx.prop import pin
 
 
 class Base:
@@ -362,7 +362,7 @@ assert "__class_memoized__" not in Child.__dict__
 Instance access caches on the instance. Class access always recomputes, so there is no class-level cache to share.
 
 ```python
-from kapro import pin
+from zx.prop import pin
 
 
 class Sample:
@@ -383,7 +383,7 @@ assert Sample.value != Sample.value  # recomputed on every class access
 Every public descriptor supports `.with_parent`. Use it in a subclass to receive the parent descriptor's value as the second positional argument.
 
 ```python
-from kapro import pin
+from zx.prop import pin
 
 
 class Parent:
@@ -412,7 +412,7 @@ The same works for `class_property`, `mixed_property`, and all `pin.*` flavors.
 `proxy_to` is a class decorator that forwards attribute access to a "pivot" object.
 
 ```python
-from kapro.special import proxy_to
+from zx.prop.special import proxy_to
 
 
 class Engine:

@@ -8,15 +8,15 @@ from __future__ import annotations
 import pytest
 from faker import Faker
 
-from kapro.cached.mixed import (
+from zx.prop.cached.mixed import (
     mixed_cached_property,
     mixed_parent_cached_property,
 )
-from kapro.cached.pre import (
+from zx.prop.cached.pre import (
     pre_cached_property,
     pre_parent_cached_property,
 )
-from kapro.primitives import BaseProperty
+from zx.prop.primitives import BaseProperty
 
 # ------------------------------------------------------------------
 # pre_parent_cached_property

@@ -6,7 +6,7 @@ from typing import Any
 import pytest
 from faker import Faker
 
-from kapro.primitives import bound_property
+from zx.prop.primitives import bound_property
 
 
 @pytest.fixture

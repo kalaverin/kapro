@@ -4,7 +4,7 @@ from collections.abc import Callable
 from functools import cached_property
 from typing import TYPE_CHECKING, Any, Protocol, TypeVar, override
 
-from kapro.cached.klass import (
+from zx.prop.cached.klass import (
     class_cached_property,
     class_parent_cached_property,
 )

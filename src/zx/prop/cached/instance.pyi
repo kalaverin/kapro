@@ -10,7 +10,7 @@ from typing import (
     override,
 )
 
-from kapro.cached.klass import class_parent_cached_property
+from zx.prop.cached.klass import class_parent_cached_property
 
 __all__ = ("cached_property",)
 T_co: Any

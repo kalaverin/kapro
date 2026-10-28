@@ -1,4 +1,4 @@
-"""Parameterized edge-case coverage for all kapro descriptors.
+"""Parameterized edge-case coverage for all zx.prop descriptors.
 
 Matrix: descriptor kind x class kind (normal, frozen dataclass, slots,
 single inheritance, diamond, mixin).
@@ -12,17 +12,17 @@ from typing import Any, ClassVar
 import pytest
 from faker import Faker
 
-from kapro import pin
-from kapro.cached import (
+from zx.prop import pin
+from zx.prop.cached import (
     cached_property,
     class_cached_property,
     mixed_cached_property,
     post_cached_property,
     pre_cached_property,
 )
-from kapro.class_property import class_property, mixed_property
-from kapro.primitives import ContextFaultError, bound_property
-from kapro.special.proxy_to import proxy_to
+from zx.prop.class_property import class_property, mixed_property
+from zx.prop.primitives import ContextFaultError, bound_property
+from zx.prop.special.proxy_to import proxy_to
 
 # ------------------------------------------------------------------
 # Expectation profiles

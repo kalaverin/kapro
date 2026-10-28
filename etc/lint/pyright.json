@@ -1,13 +1,13 @@
 {
   "include": [
-    "../../src/kapro/"
+    "../../src/zx/"
   ],
   "exclude": [
     "**/.*",
     "**/__pycache__/"
   ],
   "ignore": [
-    "../../src/kapro/settings.py"
+    "../../src/zx/settings.py"
   ],
   "executionEnvironments": [
     {

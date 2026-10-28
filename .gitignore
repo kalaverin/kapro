@@ -1,5 +1,4 @@
 .*
-.*/
 /*.md
 *.egg-info/
 __pycache__/
@@ -9,7 +8,7 @@ __pycache__/
 !INSTALL.md
 !README.md
 
-!.env.sample
+!.env.example
 !.envrc
 !.gitattributes
 !.gitignore

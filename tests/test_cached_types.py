@@ -1,4 +1,4 @@
-"""Static type assertions for kapro.cached.
+"""Static type assertions for zx.prop.cached.
 
 Run ``basedpyright tests/test_cached_types.py`` or
 ``basedmypy tests/test_cached_types.py`` to verify.
@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Final, assert_type, override
 
 from faker import Faker
 
-from kapro.cached import (
+from zx.prop.cached import (
     cached_property,
     class_cached_property,
     class_parent_cached_property,

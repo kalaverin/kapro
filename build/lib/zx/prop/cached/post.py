@@ -16,14 +16,14 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any, TypeVar, cast, override
 
-from kain import Is
+from zx.core import Is
 
-from kapro.cached.klass import class_cached_property
-from kapro.cached.mixed import (
+from zx.prop.cached.klass import class_cached_property
+from zx.prop.cached.mixed import (
     mixed_cached_property,
     mixed_parent_cached_property,
 )
-from kapro.primitives import parent_call
+from zx.prop.primitives import parent_call
 
 __all__ = ("post_cached_property", "post_parent_cached_property")
 

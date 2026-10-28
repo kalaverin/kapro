@@ -10,7 +10,7 @@ from typing import (
     override,
 )
 
-from kapro.primitives import (
+from zx.prop.primitives import (
     BaseProperty,
 )
 

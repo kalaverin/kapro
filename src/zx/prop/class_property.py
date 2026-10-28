@@ -22,10 +22,9 @@ from typing import (
     override,
 )
 
-from kain import Is, Who
-from kain.internals import get_owner
-
-from kapro.primitives import (
+from zx.core import Is, Who
+from zx.core.internals import get_owner
+from zx.prop.primitives import (
     AttributeExceptionError,
     BaseProperty,
     ContextFaultError,
@@ -47,7 +46,7 @@ class class_property[T_co](BaseProperty[T_co]):
     ``classmethod``, but for properties.
 
     The descriptor also resolves the *owning* class via
-    :func:`kapro.internals.get_owner`.  If the property is inherited, the
+    :func:`zx.prop.internals.get_owner`.  If the property is inherited, the
     ``node`` passed to ``get_owner`` ensures the MRO lookup starts from the
     concrete subclass, so mix-ins and subclassing behave correctly.
     """

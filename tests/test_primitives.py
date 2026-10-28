@@ -1,4 +1,4 @@
-"""Granular unit tests for kapro.primitives."""
+"""Granular unit tests for zx.prop.primitives."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import Any
 import pytest
 from faker import Faker
 
-from kapro.primitives import (
+from zx.prop.primitives import (
     AttributeExceptionError,
     BaseProperty,
     ContextFaultError,
@@ -187,10 +187,10 @@ class TestNothing:
 
     def test_nothing_is_missing_instance(self) -> None:
         """GIVEN Nothing
-        WHEN checked against kain.classes.Missing
+        WHEN checked against zx.core.classes.Missing
         THEN it is an instance.
         """
-        from kain.classes import Missing
+        from zx.core.classes import Missing
 
         assert isinstance(Nothing, Missing)
 

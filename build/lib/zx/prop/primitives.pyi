@@ -1,0 +1,89 @@
+from __future__ import annotations
+
+from collections.abc import Callable
+from functools import cached_property
+from typing import Any, Self, overload, override
+
+__all__ = (
+    "AttributeExceptionError",
+    "BaseProperty",
+    "ContextFaultError",
+    "Nothing",
+    "PropertyError",
+    "ReadOnlyError",
+    "bound_property",
+    "extract_wrapped",
+    "get_name",
+    "is_frozen",
+    "parent_call",
+)
+Nothing: Any
+T_co: Any
+
+def get_name(func: object) -> str: ...
+def is_frozen(node: object) -> bool: ...
+
+class PropertyError(Exception):
+    pass
+
+class ContextFaultError(PropertyError):
+    pass
+
+class ReadOnlyError(PropertyError):
+    pass
+
+class AttributeExceptionError(PropertyError):
+    def __init__(self, origin: BaseException) -> None: ...
+    @cached_property
+    def message(self) -> str: ...
+
+def extract_wrapped(obj: Any) -> Callable[..., Any]: ...
+def parent_call(func: Callable[..., Any]) -> Callable[..., Any]: ...
+
+class BaseProperty[T_co]:
+    function: Callable[..., Any]
+    @classmethod
+    def with_parent(cls, function: Callable[..., Any]) -> Self: ...
+    def __init__(self, function: Callable[..., T_co]) -> None: ...
+    @cached_property
+    def name(self) -> str: ...
+    @cached_property
+    def is_data(self) -> bool: ...
+    @cached_property
+    def title(self) -> str: ...
+    @cached_property
+    def header(self) -> str: ...
+    def header_with_context(self, node: Any) -> str: ...
+    def footer(self, node: Any, mode: str = "undefined") -> str: ...
+    def call(self, node: Any, *args: Any, **kw: Any) -> T_co: ...
+    @override
+    def __str__(self) -> str: ...
+    @override
+    def __repr__(self) -> str: ...
+
+class bound_property[T_co](BaseProperty[T_co]):
+    def __init__(self, function: Callable[[Any], T_co]) -> None: ...
+    @cached_property
+    @override
+    def title(self) -> str: ...
+    @override
+    def header_with_context(self, node: Any) -> str: ...
+    @overload
+    def __get__(
+        self,
+        node: None,
+        klass: Any = ...,
+    ) -> bound_property[T_co]: ...
+    @overload
+    def __get__(
+        self,
+        node: object,
+        klass: Any = ...,
+    ) -> T_co: ...
+    def __get__(  # type: ignore[misc]
+        self,
+        node: object | None,
+        klass: Any = Nothing,
+    ) -> bound_property[T_co] | T_co: ...
+    def __set__(self, node: object, value: Any) -> None: ...
+    def __delete__(self, node: object) -> None: ...

@@ -10,7 +10,7 @@ Like the other cached families, there are two variants:
 
 * ``mixed_cached_property`` - caches directly on the accessed node.
 * ``mixed_parent_cached_property`` - resolves the owning class via
-  :func:`kapro.internals.get_owner` when accessed on a class.
+  :func:`zx.prop.internals.get_owner` when accessed on a class.
 """
 
 # ruff: noqa: N801
@@ -23,14 +23,14 @@ from dataclasses import FrozenInstanceError
 from functools import cached_property
 from typing import TYPE_CHECKING, Any, TypeVar, cast, override
 
-from kain import Is, Who
-from kain.internals import get_owner
+from zx.core import Is, Who
+from zx.core.internals import get_owner
 
-from kapro.cached.klass import (
+from zx.prop.cached.klass import (
     class_cached_property,
     class_parent_cached_property,
 )
-from kapro.primitives import ContextFaultError, is_frozen, parent_call
+from zx.prop.primitives import ContextFaultError, is_frozen, parent_call
 
 __all__ = ("mixed_cached_property", "mixed_parent_cached_property")
 

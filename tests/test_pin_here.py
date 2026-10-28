@@ -8,19 +8,19 @@ from typing import Any
 import time_machine
 from faker import Faker
 
-from kapro.cached.klass import (
+from zx.prop.cached.klass import (
     class_cached_property,
     class_parent_cached_property,
 )
-from kapro.cached.mixed import (
+from zx.prop.cached.mixed import (
     mixed_cached_property,
     mixed_parent_cached_property,
 )
-from kapro.cached.post import (
+from zx.prop.cached.post import (
     post_cached_property,
     post_parent_cached_property,
 )
-from kapro.cached.pre import (
+from zx.prop.cached.pre import (
     pre_cached_property,
     pre_parent_cached_property,
 )

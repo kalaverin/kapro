@@ -9,14 +9,13 @@ import pytest
 import time_machine
 from faker import Faker
 
-from kain.classes import Nothing
-
-from kapro.cached.klass import (
+from zx.core.classes import Nothing
+from zx.prop.cached.klass import (
     CustomCallbackMixin,
     class_cached_property,
     class_parent_cached_property,
 )
-from kapro.primitives import (
+from zx.prop.primitives import (
     AttributeExceptionError,
     BaseProperty,
     ContextFaultError,

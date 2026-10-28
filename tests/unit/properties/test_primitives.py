@@ -10,10 +10,9 @@ from typing import Any, override
 import pytest
 from faker import Faker
 
-from kain import Who
-
-from kapro.class_property import class_property
-from kapro.primitives import (
+from zx.core import Who
+from zx.prop.class_property import class_property
+from zx.prop.primitives import (
     AttributeExceptionError,
     BaseProperty,
     ContextFaultError,

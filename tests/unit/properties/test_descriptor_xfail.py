@@ -6,12 +6,12 @@ from dataclasses import FrozenInstanceError, dataclass
 
 import pytest
 
-from kapro.cached import (
+from zx.prop.cached import (
     cached_property,
     mixed_cached_property,
     pre_cached_property,
 )
-from kapro.primitives import bound_property
+from zx.prop.primitives import bound_property
 
 
 @dataclass(frozen=True)

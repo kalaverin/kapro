@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING
 import pytest
 from faker import Faker
 
-from kapro.class_property import class_property, mixed_property
-from kapro.primitives import (
+from zx.prop.class_property import class_property, mixed_property
+from zx.prop.primitives import (
     AttributeExceptionError,
     BaseProperty,
     ContextFaultError,

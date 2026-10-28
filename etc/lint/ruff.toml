@@ -3,6 +3,7 @@ exclude = [
   ".git"
 ]
 line-length = 79
+namespace-packages = ["src/zx"]
 output-format = "full"
 target-version = "py312"
 
@@ -106,7 +107,7 @@ known-first-party = [
   "charded",
   "kain",
   "kalib",
-  "kapro",
+  "zx",
   "kasha",
   "kashasa",
   "kuit"

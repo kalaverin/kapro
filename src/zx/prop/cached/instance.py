@@ -1,7 +1,7 @@
 """Instance-level cached property descriptor.
 
 This module defines :class:`cached_property` — the caching equivalent of
-:class:`kapro.primitives.bound_property`.  It stores computed
+:class:`zx.prop.primitives.bound_property`.  It stores computed
 values in a per-instance dictionary named ``__instance_memoized__`` and
 supports parent-aware resolution (via inheritance from
 :class:`class_parent_cached_property`).
@@ -26,10 +26,9 @@ from typing import (
     override,
 )
 
-from kain import Is, Who
-
-from kapro.cached.klass import class_parent_cached_property
-from kapro.primitives import ContextFaultError, is_frozen, parent_call
+from zx.core import Is, Who
+from zx.prop.cached.klass import class_parent_cached_property
+from zx.prop.primitives import ContextFaultError, is_frozen, parent_call
 
 __all__ = ("cached_property",)
 

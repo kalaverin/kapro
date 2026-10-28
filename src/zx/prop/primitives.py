@@ -1,4 +1,4 @@
-"""Primitive building blocks for the ``kapro.properties`` descriptor system.
+"""Primitive building blocks for the ``zx.prop.properties`` descriptor system.
 
 This module defines the exception hierarchy, helper utilities, and the two
 foundational descriptor classes (:class:`BaseProperty` and
@@ -33,9 +33,9 @@ from functools import cached_property, wraps
 from inspect import iscoroutinefunction
 from typing import Any, Self, TypeVar, cast, overload, override
 
-from kain import Is, Who
-from kain.classes import Missing
-from kain.internals import get_attr
+from zx.core import Is, Who
+from zx.core.classes import Missing
+from zx.core.internals import get_attr
 
 __all__ = (
     "AttributeExceptionError",
@@ -161,7 +161,7 @@ def parent_call(func: Callable[..., Any]) -> Callable[..., Any]:
     4. Call the user's ``func``, injecting the parent result as the *second*
        positional argument (right after ``node``).
 
-    The ``index`` parameter to :func:`kapro.internals.get_attr` is computed
+    The ``index`` parameter to :func:`zx.prop.internals.get_attr` is computed
     with the expression ``func.__name__ not in Is.classOf(node).__dict__``.
     Because ``bool`` is a subclass of ``int`` in Python, this yields:
 
@@ -210,7 +210,7 @@ def parent_call(func: Callable[..., Any]) -> Callable[..., Any]:
 
 
 class BaseProperty[T_co]:
-    """Abstract base class shared by all ``kapro`` descriptors.
+    """Abstract base class shared by all ``zx.prop`` descriptors.
 
     ``BaseProperty`` does not implement ``__get__`` itself; subclasses decide
     whether the descriptor is instance-only, class-only, or mixed.  What this

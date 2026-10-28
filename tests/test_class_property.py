@@ -1,4 +1,4 @@
-"""Granular unit tests for kapro.class_property module."""
+"""Granular unit tests for zx.prop.class_property module."""
 
 from __future__ import annotations
 
@@ -7,11 +7,11 @@ from typing import Any
 import pytest
 from faker import Faker
 
-from kapro.class_property import (
+from zx.prop.class_property import (
     class_property,
     mixed_property,
 )
-from kapro.primitives import (
+from zx.prop.primitives import (
     AttributeExceptionError,
     ContextFaultError,
 )

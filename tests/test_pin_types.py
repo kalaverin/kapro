@@ -1,4 +1,4 @@
-"""Static type assertions for kapro.pin.
+"""Static type assertions for zx.prop.pin.
 
 Run ``basedpyright tests/test_pin_types.py`` or
 ``basedmypy tests/test_pin_types.py`` to verify.
@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING, Final, assert_type
 
 from faker import Faker
 
-from kapro import pin
-from kapro.cached import cached_property
+from zx.prop import pin
+from zx.prop.cached import cached_property
 
 TYPE_STUB_SEED: Final[int] = 0
 _TYPE_FAKER = Faker(["en_US"])

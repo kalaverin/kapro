@@ -50,7 +50,7 @@ dev = [
 
 [project]
 authors = [
-  {name = "Alex Kalaverin", email = "alex@kalaver.in"}
+  { name = "Alex Kalaverin", email = "alex@kalaver.in" }
 ]
 classifiers = [
   "Intended Audience :: Developers",
@@ -62,13 +62,13 @@ classifiers = [
   "Operating System :: OS Independent"
 ]
 dependencies = [
-  "kain>=1.2.0"
+  "kain>=2.0.0,<3"
 ]
 description = "kapro"
 name = "kapro"
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
-version = "0.1.0"
+version = "1.0.0"
 
 [project.urls]
 Homepage = "https://kalaver.in"
@@ -145,7 +145,7 @@ section-order = [
 ]
 
 [tool.ruff.lint.isort.sections]
-local-project = ["kapro"]
+local-project = ["zx"]
 
 [tool.ruff.lint.per-file-ignores]
 "*.pyi" = [

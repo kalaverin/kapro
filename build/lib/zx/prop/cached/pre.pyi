@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, Protocol, TypeVar, override
 
-from kapro.cached.klass import class_cached_property
-from kapro.cached.mixed import (
+from zx.prop.cached.klass import class_cached_property
+from zx.prop.cached.mixed import (
     mixed_cached_property,
     mixed_parent_cached_property,
 )

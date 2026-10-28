@@ -19,10 +19,9 @@ from functools import cached_property, partial
 from time import time
 from typing import TYPE_CHECKING, Any, TypeVar, cast, override
 
-from kain import Is, Who
-from kain.internals import get_owner
-
-from kapro.primitives import (
+from zx.core import Is, Who
+from zx.core.internals import get_owner
+from zx.prop.primitives import (
     AttributeExceptionError,
     BaseProperty,
     ContextFaultError,
@@ -85,7 +84,7 @@ class class_parent_cached_property[T_co](
 ):
     """Class-level cached descriptor that stores cache on the *owning* class.
 
-    The *owning* class is determined by :func:`kapro.internals.get_owner`,
+    The *owning* class is determined by :func:`zx.prop.internals.get_owner`,
     which walks the MRO to find the class that actually defines this
     descriptor.  This means that if ``Base`` defines the property and
     ``Child(Base)`` is accessed, the cache lives on ``Base`` — so all

@@ -1,4 +1,4 @@
-"""Tests for kapro.properties module."""
+"""Tests for zx.prop.properties module."""
 
 from __future__ import annotations
 
@@ -10,12 +10,12 @@ import pytest
 import time_machine
 from faker import Faker
 
-from kapro import (
+from zx.prop import (
     class_property,
     mixed_property,
     pin,
 )
-from kapro.primitives import (
+from zx.prop.primitives import (
     AttributeExceptionError,
     BaseProperty,
     ContextFaultError,

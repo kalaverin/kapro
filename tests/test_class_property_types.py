@@ -1,4 +1,4 @@
-"""Static type assertions for kapro.class_property.
+"""Static type assertions for zx.prop.class_property.
 
 Run ``basedpyright tests/test_class_property_types.py`` or
 ``basedmypy tests/test_class_property_types.py`` to verify.
@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Final, assert_type, override
 
 from faker import Faker
 
-from kapro.class_property import class_property, mixed_property
+from zx.prop.class_property import class_property, mixed_property
 
 TYPE_STUB_SEED: Final[int] = 0
 _TYPE_FAKER = Faker(["en_US"])

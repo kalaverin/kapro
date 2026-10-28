@@ -1,4 +1,4 @@
-"""Static type assertions for kapro.special.proxy_to.
+"""Static type assertions for zx.prop.special.proxy_to.
 
 Run ``basedpyright tests/test_proxy_to_types.py`` or
 ``basedmypy tests/test_proxy_to_types.py`` to verify.
@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Final, assert_type
 
 from faker import Faker
 
-from kapro.special.proxy_to import proxy_to
+from zx.prop.special.proxy_to import proxy_to
 
 TYPE_STUB_SEED: Final[int] = 0
 _TYPE_FAKER = Faker(["en_US"])

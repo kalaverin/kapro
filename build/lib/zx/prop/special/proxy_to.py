@@ -14,11 +14,11 @@ from logging import getLogger
 from operator import attrgetter
 from typing import Any, Never, Protocol, TypeVar, override
 
-from kain import Is, Who
-from kain.classes import Nothing
-from kain.internals import get_attr
+from zx.core import Is, Who
+from zx.core.classes import Nothing
+from zx.core.internals import get_attr
 
-from kapro.primitives import bound_property
+from zx.prop.primitives import bound_property
 
 __all__ = ("Binder", "RawBinder", "proxy_to")
 

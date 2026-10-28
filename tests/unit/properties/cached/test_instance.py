@@ -8,9 +8,9 @@ from __future__ import annotations
 import pytest
 from faker import Faker
 
-from kapro.cached.instance import cached_property
-from kapro.cached.klass import class_parent_cached_property
-from kapro.primitives import BaseProperty, ContextFaultError
+from zx.prop.cached.instance import cached_property
+from zx.prop.cached.klass import class_parent_cached_property
+from zx.prop.primitives import BaseProperty, ContextFaultError
 
 # ------------------------------------------------------------------
 # cached_property behavior

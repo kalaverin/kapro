@@ -3,13 +3,13 @@ from __future__ import annotations
 import pytest
 from faker import Faker
 
-from kapro.cached.instance import cached_property
-from kapro.cached.klass import class_cached_property
-from kapro.cached.mixed import mixed_cached_property
-from kapro.cached.post import post_cached_property
-from kapro.cached.pre import pre_cached_property
-from kapro.class_property import class_property, mixed_property
-from kapro.primitives import bound_property
+from zx.prop.cached.instance import cached_property
+from zx.prop.cached.klass import class_cached_property
+from zx.prop.cached.mixed import mixed_cached_property
+from zx.prop.cached.post import post_cached_property
+from zx.prop.cached.pre import pre_cached_property
+from zx.prop.class_property import class_property, mixed_property
+from zx.prop.primitives import bound_property
 
 
 @pytest.fixture

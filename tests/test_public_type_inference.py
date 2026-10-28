@@ -1,4 +1,4 @@
-"""Type inference playground for every public symbol in ``kapro.__all__``.
+"""Type inference playground for every public symbol in ``zx.prop.__all__``.
 
 Run with a static analyzer to check inference:
 
@@ -16,8 +16,8 @@ from typing import TYPE_CHECKING, ClassVar, assert_type, cast
 
 from faker import Faker
 
-from kapro import class_property, mixed_property, pin, special
-from kapro.cached import cached_property
+from zx.prop import class_property, mixed_property, pin, special
+from zx.prop.cached import cached_property
 
 
 def _record[T](owner: object, name: str, value: T) -> T:
@@ -28,7 +28,7 @@ def _record[T](owner: object, name: str, value: T) -> T:
 
 
 class Parent:
-    """Exercise all public kapro descriptors and ``pin`` flavors."""
+    """Exercise all public zx.prop descriptors and ``pin`` flavors."""
 
     _faker: ClassVar[Faker]
     history: ClassVar[dict[str, list[object]]]

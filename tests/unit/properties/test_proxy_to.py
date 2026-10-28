@@ -11,17 +11,17 @@ from typing import TYPE_CHECKING, Any, ClassVar
 import pytest
 from faker import Faker
 
-from kapro import pin
-from kapro.cached import (
+from zx.prop import pin
+from zx.prop.cached import (
     cached_property,
     class_cached_property,
     mixed_cached_property,
     post_cached_property,
     pre_cached_property,
 )
-from kapro.class_property import class_property, mixed_property
-from kapro.primitives import bound_property
-from kapro.special.proxy_to import proxy_to
+from zx.prop.class_property import class_property, mixed_property
+from zx.prop.primitives import bound_property
+from zx.prop.special.proxy_to import proxy_to
 
 if TYPE_CHECKING:
     from collections.abc import Callable

@@ -1,4 +1,4 @@
-"""Granular unit tests for kapro.cached descriptor family."""
+"""Granular unit tests for zx.prop.cached descriptor family."""
 
 from __future__ import annotations
 
@@ -10,24 +10,24 @@ import pytest
 import time_machine
 from faker import Faker
 
-from kapro.cached.instance import cached_property
-from kapro.cached.klass import (
+from zx.prop.cached.instance import cached_property
+from zx.prop.cached.klass import (
     class_cached_property,
     class_parent_cached_property,
 )
-from kapro.cached.mixed import (
+from zx.prop.cached.mixed import (
     mixed_cached_property,
     mixed_parent_cached_property,
 )
-from kapro.cached.post import (
+from zx.prop.cached.post import (
     post_cached_property,
     post_parent_cached_property,
 )
-from kapro.cached.pre import (
+from zx.prop.cached.pre import (
     pre_cached_property,
     pre_parent_cached_property,
 )
-from kapro.primitives import ContextFaultError
+from zx.prop.primitives import ContextFaultError
 
 
 class TestCustomCallbackMixin:
