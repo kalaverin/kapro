@@ -58,17 +58,19 @@ classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "License :: OSI Approved :: BSD License",
   "Operating System :: OS Independent"
 ]
 dependencies = [
-  "kain>=2.0.0,<3"
+  "kain>=2.0.2,<3"
 ]
 description = "kapro"
 name = "kapro"
 readme = "README.md"
-requires-python = ">=3.12,<3.14"
-version = "1.0.0"
+requires-python = ">=3.12,<3.16"
+version = "1.0.1"
 
 [project.urls]
 Homepage = "https://kalaver.in"
