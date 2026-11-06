@@ -3,7 +3,8 @@
 A *mixed* property works on both instances and classes.  The cache is stored
 in a dictionary whose name depends on the access context:
 
-* Instance access → ``__instance_memoized__``
+* Instance access → ``__instance_memoized__`` (owned by the instance,
+  copy-on-write detached, see :mod:`zx.prop.cached.memo`)
 * Class access    → ``__class_memoized__``
 
 Like the other cached families, there are two variants:
@@ -29,6 +30,7 @@ from zx.prop.cached.klass import (
     class_cached_property,
     class_parent_cached_property,
 )
+from zx.prop.cached.memo import own_memo
 from zx.prop.primitives import ContextFaultError, is_frozen, parent_call
 
 __all__ = ("mixed_cached_property", "mixed_parent_cached_property")
@@ -89,12 +91,7 @@ class mixed_parent_cached_property[T_co](
             msg = f"{self.header_with_context(pivot)} has no __dict__"
             raise TypeError(msg)
 
-        with suppress(KeyError):
-            return instance_cache[name]
-
-        new_cache: dict[str, Any] = {}
-        instance_cache[name] = new_cache
-        return new_cache
+        return own_memo(pivot)
 
     @override
     def __get__(self, instance: Any, klass: Any = None) -> T_co:

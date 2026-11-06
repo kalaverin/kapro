@@ -5,6 +5,11 @@ This module defines :class:`cached_property` — the caching equivalent of
 values in a per-instance dictionary named ``__instance_memoized__`` and
 supports parent-aware resolution (via inheritance from
 :class:`class_parent_cached_property`).
+
+The memo dict is owned by exactly one instance: a shallow copy shares the
+reference, so the first access through the clone detaches it (copy-on-
+write, see :mod:`zx.prop.cached.memo`). A clone therefore starts with an
+empty memo and never clobbers the original's cache entries.
 """
 
 # ruff: noqa: ANN401, N801
@@ -12,7 +17,6 @@ supports parent-aware resolution (via inheritance from
 from __future__ import annotations
 
 from collections.abc import Callable
-from contextlib import suppress
 from dataclasses import FrozenInstanceError
 from functools import cached_property as base_cached_property
 from types import NoneType
@@ -28,6 +32,7 @@ from typing import (
 
 from zx.core import Is, Who
 from zx.prop.cached.klass import class_parent_cached_property
+from zx.prop.cached.memo import own_memo
 from zx.prop.primitives import ContextFaultError, is_frozen, parent_call
 
 __all__ = ("cached_property",)
@@ -69,13 +74,7 @@ class cached_property[T_co](class_parent_cached_property[T_co]):
             msg = f"{self.header_with_context(pivot)} has no __dict__"
             raise TypeError(msg)
 
-        name = "__instance_memoized__"
-        with suppress(KeyError):
-            return cache[name]
-
-        new_cache: dict[str, Any] = {}
-        cache[name] = new_cache
-        return new_cache
+        return own_memo(pivot)
 
     @overload
     def __get__(

@@ -3,6 +3,7 @@ from zx.prop.cached.klass import (
     class_cached_property,
     class_parent_cached_property,
 )
+from zx.prop.cached.memo import detach_memo
 from zx.prop.cached.mixed import (
     mixed_cached_property,
     mixed_parent_cached_property,
@@ -20,6 +21,7 @@ __all__ = (
     "cached_property",
     "class_cached_property",
     "class_parent_cached_property",
+    "detach_memo",
     "mixed_cached_property",
     "mixed_parent_cached_property",
     "post_cached_property",

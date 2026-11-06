@@ -6,6 +6,7 @@ from zx.prop import special
 from zx.prop.cached import (
     cached_property,
     class_cached_property,
+    detach_memo,
     mixed_cached_property,
     post_cached_property,
     pre_cached_property,
@@ -49,6 +50,7 @@ class pin[T_co](bound_property[T_co]):  # noqa: N801
 
 __all__ = (
     "class_property",
+    "detach_memo",
     "mixed_property",
     "pin",
     "special",
